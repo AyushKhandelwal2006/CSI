@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #000;
+  font-family: ui-sans-serif, system-ui;
+}
+
+.brutal-grid {
+  background-color: #f5f5f5;
+  background-image: radial-gradient(#000 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.brutal-grid {
+  background-color: #f5f5f5;
+  background-image:
+    linear-gradient(to right, #00000012 1px, transparent 1px),
+    linear-gradient(to bottom, #00000012 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+
+.brutal-btn {
+  padding: 10px 18px;
+  font-weight: 800;
+  background: white;
+  border: 3px solid black;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 black;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.brutal-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 black;
+}
+
+
+.brutal-btn {
+  padding: 10px 18px;
+  font-weight: 800;
+  background: white;
+  border: 3px solid black;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 black;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.brutal-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 black;
+}
+
+/* === Neo-Brutal 2.0 Enhancements === */
+
+body {
+  background: #f9fafb;
+  overflow: hidden;
+}
+
+/* playful grid */
+.brutal-grid {
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* floating color blobs */
+.bg-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  opacity: 0.7;
+  z-index: 0;
+}
+
+/* brutal shadows upgrade */
+.shadow-brutal {
+  box-shadow: 8px 8px 0 #000;
+}
+
+.brutal-btn {
+  padding: 10px 18px;
+  font-weight: 900;
+  background: white;
+  border: 3px solid black;
+  border-radius: 14px;
+  box-shadow: 6px 6px 0 black;
+  transition: all 0.15s ease;
+}
+
+.brutal-btn:hover {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 black;
+}
+
+/* pin polish */
+.pin-card {
+  backdrop-filter: saturate(150%);
+  transition: transform 0.12s ease;
+}
+
+.pin-card:hover {
+  transform: rotate(-0.5deg) scale(1.02);
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade {
+  animation: fade 0.4s ease-out;
+}
