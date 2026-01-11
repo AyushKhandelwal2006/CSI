@@ -1,65 +1,55 @@
-import { useEffect, useState } from "react"
-import { loadBoards, saveBoards } from "../lib/storage"
+import { useEffect } from "react"
 import useHistory from "./useHistory"
+import {
+  saveBoard,
+  loadBoard,
+  loadBoards,
+  saveBoards
+} from "../lib/storage"
 
 export default function useBoard() {
-  const [boards, setBoards] = useState(null)
   const history = useHistory([])
+  const boards = loadBoards()
 
   useEffect(() => {
-    const stored = loadBoards()
-    if (stored) {
-      setBoards(stored)
-      const active = stored.list.find(b => b.id === stored.activeId)
-      history.set(active ? active.pins : [])
-    } else {
-      const id = Date.now().toString()
-      const initial = { activeId: id, list: [{ id, name: "Untitled", pins: [] }] }
-      setBoards(initial)
-      saveBoards(initial)
-    }
+    history.set(loadBoard())
   }, [])
 
   useEffect(() => {
-    if (!boards) return
-    const updated = {
-      ...boards,
-      list: boards.list.map(b =>
-        b.id === boards.activeId ? { ...b, pins: history.state } : b
-      )
-    }
-    setBoards(updated)
-    saveBoards(updated)
+    saveBoard(history.state)
+    if (!boards.activeId) return
+
+    const updated = boards.list.map(b =>
+      b.id === boards.activeId
+        ? { ...b, updatedAt: Date.now(), pins: history.state.length }
+        : b
+    )
+
+    saveBoards({ ...boards, list: updated })
   }, [history.state])
+
+  const clearBoard = () => history.set([])
 
   const createBoard = name => {
     const id = Date.now().toString()
     const next = {
       activeId: id,
-      list: [...boards.list, { id, name, pins: [] }]
+      list: [...boards.list, { id, name, updatedAt: Date.now(), pins: 0 }]
     }
-    setBoards(next)
-    history.set([])
     saveBoards(next)
+    history.set([])
   }
 
   const openBoard = id => {
-    const board = boards.list.find(b => b.id === id)
-    if (!board) return
-    setBoards({ ...boards, activeId: id })
-    history.set(board.pins)
+    saveBoards({ ...boards, activeId: id })
+    history.set(loadBoard(id))
   }
 
-  const clearBoard = () => history.set([])
-
   return {
-    state: history.state,
-    set: history.set,
-    undo: history.undo,
-    redo: history.redo,
+    ...history,
+    clearBoard,
     boards,
     createBoard,
-    openBoard,
-    clearBoard
+    openBoard
   }
 }

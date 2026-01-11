@@ -1,67 +1,83 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useState, useRef } from "react"
+
+const COLORS = ["#4DFF88", "#4D96FF", "#FFE44D", "#FF7AD9"]
 
 export default function Pin({ pin, onChange }) {
   const ref = useRef(null)
-  const textareaRef = useRef(null)
+  const [dragging, setDragging] = useState(false)
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+  const [showTools, setShowTools] = useState(false)
 
-  useEffect(() => {
-    if (pin.focus && textareaRef.current) {
-      textareaRef.current.focus()
-      onChange({ ...pin, focus: false })
-    }
-  }, [])
-
-  const onPointerDown = e => {
-    const rect = ref.current.getBoundingClientRect()
-    const ox = e.clientX - rect.left
-    const oy = e.clientY - rect.top
-
-    const move = ev => {
-      onChange({ ...pin, x: ev.clientX - ox, y: ev.clientY - oy })
-    }
-
-    const up = () => {
-      window.removeEventListener("pointermove", move)
-      window.removeEventListener("pointerup", up)
-    }
-
-    window.addEventListener("pointermove", move)
-    window.addEventListener("pointerup", up)
+  const onMouseDown = e => {
+    setDragging(true)
+    setOffset({
+      x: e.clientX - pin.x,
+      y: e.clientY - pin.y
+    })
   }
 
-  const remove = () => {
-    onChange({ ...pin, _delete: true })
+  const onMouseMove = e => {
+    if (!dragging) return
+    onChange({
+      ...pin,
+      x: e.clientX - offset.x,
+      y: e.clientY - offset.y
+    })
+  }
+
+  const stopDrag = () => setDragging(false)
+
+  const updateText = e => {
+    onChange({ ...pin, text: e.target.value })
   }
 
   return (
     <div
       ref={ref}
-      onPointerDown={onPointerDown}
-      style={{ left: pin.x, top: pin.y, background: pin.color }}
-      className="pin-card absolute border-4 border-black shadow-brutal rounded-brutal p-4 cursor-grab group min-w-[180px]"
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={stopDrag}
+      onMouseLeave={stopDrag}
+      onMouseEnter={() => setShowTools(true)}
+      onMouseLeaveCapture={() => setShowTools(false)}
+      style={{
+        left: pin.x,
+        top: pin.y,
+        background: pin.color
+      }}
+      className="absolute min-w-[200px] border-4 border-black shadow-brutal rounded-brutal p-3 cursor-move"
     >
-      <button
-        onClick={remove}
-        className="absolute -top-3 -right-3 w-6 h-6 bg-black text-white rounded-full hidden group-hover:flex items-center justify-center text-sm"
-      >
-        ×
-      </button>
+      {showTools && (
+        <div className="flex gap-1 mb-2">
+          {COLORS.map(c => (
+            <button
+              key={c}
+              onClick={() => onChange({ ...pin, color: c })}
+              style={{ background: c }}
+              className="w-5 h-5 border-2 border-black rounded-full"
+            />
+          ))}
 
-      {pin.text !== undefined && (
-        <textarea
-          ref={textareaRef}
-          value={pin.text}
-          onChange={e => onChange({ ...pin, text: e.target.value })}
-          className="w-full bg-transparent outline-none resize-none font-bold text-lg text-green-900"
-        />
+          <button
+            onClick={() => onChange({ ...pin, _delete: true })}
+            className="ml-auto text-red-600 font-black"
+          >
+            ✕
+          </button>
+        </div>
       )}
 
-      {pin.image && (
-        <img
-          src={pin.image}
-          className="max-w-[240px] mt-2 border-2 border-black rounded-brutal"
+      {pin.image ? (
+        <img src={pin.image} className="max-w-[240px] rounded" />
+      ) : (
+        <textarea
+          autoFocus={pin.focus}
+          value={pin.text}
+          onChange={updateText}
+          placeholder="Write something..."
+          className="w-full bg-transparent outline-none resize-none font-bold"
         />
       )}
     </div>

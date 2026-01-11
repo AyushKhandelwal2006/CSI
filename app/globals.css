@@ -121,3 +121,37 @@ body {
 .animate-fade {
   animation: fade 0.4s ease-out;
 }
+
+
+.brutal-btn {
+  padding: 8px 14px;
+  border: 3px solid black;
+  border-radius: 14px;
+  background: white;
+  font-weight: 900;
+  box-shadow: 4px 4px 0 black;
+  transition: all 0.15s ease;
+}
+
+.brutal-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0 black;
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 black;
+}
+
+.animate-fade {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.brutal-btn {
+  @apply bg-white border-2 border-black rounded-xl px-4 py-2 font-bold text-black shadow-[4px_4px_0px_#000];
+}

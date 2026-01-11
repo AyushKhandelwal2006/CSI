@@ -7,26 +7,23 @@ export default function SnapshotPanel({ board }) {
   const { boards, createBoard, openBoard } = board
   const [name, setName] = useState("")
 
-  if (!boards) return null
-
-  const save = () => {
+  const saveBoard = () => {
     if (!name.trim()) return
     createBoard(name.trim())
     setName("")
   }
 
   const exportImage = async () => {
-    const canvas = document.querySelector(".brutal-grid")
-    if (!canvas) return
-    const img = await html2canvas(canvas)
+    const node = document.querySelector(".brutal-grid")
+    const canvas = await html2canvas(node)
     const link = document.createElement("a")
     link.download = "board.png"
-    link.href = img.toDataURL()
+    link.href = canvas.toDataURL()
     link.click()
   }
 
   const deleteBoard = id => {
-    if (!confirm("Delete this board permanently?")) return
+    if (!confirm("Delete this board?")) return
     const remaining = boards.list.filter(b => b.id !== id)
     if (!remaining.length) return
     openBoard(remaining[0].id)
@@ -38,7 +35,7 @@ export default function SnapshotPanel({ board }) {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 bg-blue-400 p-4 border-4 border-black shadow-brutal rounded-brutal w-64 z-[100] pointer-events-auto">
+    <div className="fixed bottom-6 right-6 bg-blue-400 border-4 border-black shadow-brutal rounded-brutal p-4 w-64 z-[100] pointer-events-auto">
       <input
         value={name}
         onChange={e => setName(e.target.value)}
@@ -46,7 +43,7 @@ export default function SnapshotPanel({ board }) {
         className="w-full mb-2 p-2 border-2 border-black rounded-brutal"
       />
 
-      <button onClick={save} className="brutal-btn w-full mb-2">
+      <button onClick={saveBoard} className="brutal-btn w-full mb-2">
         Save New Board
       </button>
 
